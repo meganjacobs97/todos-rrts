@@ -2,13 +2,13 @@ import axios from "axios";
 import { Dispatch } from "redux";
 import { ActionTypes } from "./types";
 
-interface Todo {
+export interface Todo {
     id: number,
     title: string,
     completed: boolean
 };
 
-interface FetchTodosAction {
+export interface FetchTodosAction {
     type: ActionTypes.fetchTodos,
     payload: Todo[]
 };
@@ -22,6 +22,7 @@ export const fetchTodos = () => {
         const response = await
             axios.get<Todo[]>(url)
 
+        //use interface describe action
         dispatch<FetchTodosAction>({
             type: ActionTypes.fetchTodos,
             payload: response.data
