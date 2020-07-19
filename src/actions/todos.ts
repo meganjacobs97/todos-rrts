@@ -19,7 +19,7 @@ export interface DeleteTodoAction {
     payload: number
 };
 
-const url = "https://jsonplaceholder.typicode.com/todos";
+const url = "http://localhost:3001/api/todos/";
 
 export const fetchTodos = () => {
     //make use of redux thunk since this asyncronous 
