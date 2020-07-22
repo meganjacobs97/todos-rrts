@@ -4,7 +4,7 @@ import { Todo } from "../actions";
 
 //describe the entire state of the store 
 export interface StoreState {
-    todos: Todo[]
+    todos: Todo[];
 }
 
 export const reducers = combineReducers<StoreState>({
