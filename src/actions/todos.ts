@@ -19,6 +19,11 @@ export interface DeleteTodoAction {
     payload: number
 };
 
+export interface CreateTodoAction {
+    type: ActionTypes.createTodo,
+    payload: Todo
+}
+
 const url = "http://localhost:3001/api/todos/";
 
 export const fetchTodos = () => {
@@ -31,6 +36,23 @@ export const fetchTodos = () => {
         //use interface describe action
         dispatch<FetchTodosAction>({
             type: ActionTypes.fetchTodos,
+            payload: response.data
+        });
+    };
+};
+
+export const createTodo = (title: string, content: string) => {
+    console.log(title);
+    console.log(content);
+    return async (dispatch: Dispatch) => {
+        const response = await axios.post<Todo>(url, {
+            title,
+            content,
+            completed: false
+        })
+
+        dispatch<CreateTodoAction>({
+            type: ActionTypes.createTodo,
             payload: response.data
         });
     };

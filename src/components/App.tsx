@@ -1,13 +1,13 @@
 import React, { ChangeEvent, FormEvent, useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { Todo, fetchTodos, deleteTodo } from "../actions";
+import { Todo, fetchTodos, deleteTodo, createTodo } from "../actions";
 import { StoreState } from "../reducers";
 
 interface AppProps {
     todos: Todo[];
     //say function is of type function since its async
     fetchTodos: Function;
-    // createTodo: Function;
+    createTodo: Function;
     deleteTodo: typeof deleteTodo;
 }
 
@@ -46,9 +46,10 @@ const _App = (props: AppProps) => {
     const onSubmitClick = (event: FormEvent<HTMLElement>): void => {
         event.preventDefault();
         if (formObject.title) {
-            console.log("title", formObject.title);
-            console.log("content", formObject.content);
-            // this.props.createTodo(this.state.formObject);
+            if (!formObject.content) {
+                setFormObject({ ...formObject, content: "" });
+            }
+            props.createTodo(formObject.title, formObject.content);
 
             //reset 
             setFormObject({ title: "", content: "" });
@@ -180,7 +181,7 @@ const mapStateToProps = (state: StoreState): { todos: Todo[] } => {
 export const App = connect(
     mapStateToProps,
     //action creator 
-    { fetchTodos, deleteTodo }
+    { fetchTodos, createTodo, deleteTodo }
 )(_App);
 
 
