@@ -3,6 +3,7 @@ import { Dispatch } from "redux";
 import { ActionTypes } from "./types";
 
 export interface Todo {
+    _id?: number,
     id: number,
     title: string,
     completed: boolean
@@ -15,7 +16,7 @@ export interface FetchTodosAction {
 
 export interface DeleteTodoAction {
     type: ActionTypes.deleteTodo,
-    //id of todo
+    //id
     payload: number
 };
 
@@ -24,7 +25,13 @@ export interface CreateTodoAction {
     payload: Todo
 }
 
+export interface UpdateTodoAction {
+    type: ActionTypes.updateTodo,
+    payload: Todo
+}
+
 const url = "http://localhost:3001/api/todos/";
+const singleTodoUrl = "http://localhost:3001/api/todo/";
 
 export const fetchTodos = () => {
     //make use of redux thunk since this asyncronous 
@@ -42,8 +49,6 @@ export const fetchTodos = () => {
 };
 
 export const createTodo = (title: string, content: string) => {
-    console.log(title);
-    console.log(content);
     return async (dispatch: Dispatch) => {
         const response = await axios.post<Todo>(url, {
             title,
@@ -58,9 +63,26 @@ export const createTodo = (title: string, content: string) => {
     };
 };
 
-export const deleteTodo = (id: number): DeleteTodoAction => {
-    return {
-        type: ActionTypes.deleteTodo,
-        payload: id
+export const updateTodo = (id: number, update: { [key: string]: string | boolean }) => {
+    return async (dispatch: Dispatch) => {
+        console.log("here");
+        const response = await axios.put<Todo>(singleTodoUrl + id, update)
+
+        dispatch<UpdateTodoAction>({
+            type: ActionTypes.updateTodo,
+            payload: response.data
+        });
+    }
+}
+
+export const deleteTodo = (id: number) => {
+    return async (dispatch: Dispatch) => {
+        console.log("here");
+        const response = await axios.delete<Todo>(singleTodoUrl + id)
+
+        dispatch<DeleteTodoAction>({
+            type: ActionTypes.deleteTodo,
+            payload: response.data.id
+        });
     }
 }

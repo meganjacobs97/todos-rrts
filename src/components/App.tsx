@@ -1,6 +1,6 @@
 import React, { ChangeEvent, FormEvent, useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { Todo, fetchTodos, deleteTodo, createTodo } from "../actions";
+import { Todo, fetchTodos, deleteTodo, createTodo, updateTodo } from "../actions";
 import { StoreState } from "../reducers";
 
 interface AppProps {
@@ -8,7 +8,8 @@ interface AppProps {
     //say function is of type function since its async
     fetchTodos: Function;
     createTodo: Function;
-    deleteTodo: typeof deleteTodo;
+    updateTodo: Function;
+    deleteTodo: Function;
 }
 
 // interface AppState {
@@ -30,6 +31,10 @@ const _App = (props: AppProps) => {
     const [fetching, setFetching] = useState<Boolean>(false);
     const [todos, setTodos] = useState<Todo[]>([])
     const [formObject, setFormObject] = useState<IFormObject>({ title: "", content: "" });
+
+    useEffect(() => {
+        fetchTodos();
+    }, [todos])
 
     const onButtonClick = (): void => {
         setFetching(true);
@@ -57,17 +62,47 @@ const _App = (props: AppProps) => {
     }
 
     const onDeleteClick = (id: number): void => {
-        deleteTodo(id);
+        props.deleteTodo(id);
     }
 
-    const renderList = (): JSX.Element[] => {
+    const onCompleteClick = (id: number): void => {
+        props.updateTodo(id, { completed: true });
+
+    }
+
+    const renderIncompleteList = (): JSX.Element[] => {
         return props.todos.map((todo: Todo) => {
-            return <div key={todo.id}>
-                {todo.title}
-                <button onClick={() => onDeleteClick(todo.id)}>
-                    x
+            console.log(todo);
+            if (!todo.completed) {
+                return <div key={todo.id}>
+                    {todo.title}
+                    <button onClick={() => onCompleteClick(todo.id)}>
+                        Completed
                 </button>
-            </div>
+                    <button onClick={() => onDeleteClick(todo.id)}>
+                        x
+                </button>
+                </div>
+            }
+            else {
+                return <div></div>
+            }
+        })
+    }
+
+    const renderCompleteList = (): JSX.Element[] => {
+        return props.todos.map((todo: Todo) => {
+            if (todo.completed) {
+                return <div key={todo.id}>
+                    {todo.title}
+                    <button onClick={() => onDeleteClick(todo.id)}>
+                        x
+                </button>
+                </div>
+            }
+            else {
+                return <div></div>
+            }
         })
     }
 
@@ -91,7 +126,10 @@ const _App = (props: AppProps) => {
         </div>
         <button onClick={onButtonClick}>Fetch Todos</button>
         {fetching ? 'LOADING' : null}
-        {renderList()}
+        <div><h3>Incomplete</h3></div>
+        {renderIncompleteList()}
+        <div><h3>Complete</h3></div>
+        {renderCompleteList()}
     </div>
     );
 
@@ -181,7 +219,7 @@ const mapStateToProps = (state: StoreState): { todos: Todo[] } => {
 export const App = connect(
     mapStateToProps,
     //action creator 
-    { fetchTodos, createTodo, deleteTodo }
+    { fetchTodos, createTodo, deleteTodo, updateTodo }
 )(_App);
 
 
