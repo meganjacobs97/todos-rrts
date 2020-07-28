@@ -5,7 +5,8 @@ import { StoreState } from "../reducers";
 import { AppProps } from "../App";
 import { todosReducer } from "../reducers/todos";
 import { Link } from "react-router-dom";
-interface IFormObject {
+
+export interface IFormObject {
     title: string,
     content?: string
 }
@@ -58,7 +59,8 @@ export const TodosPage = (props: AppProps) => {
         return props.todos.map((todo: Todo) => {
             if (!todo.completed) {
                 return (<div key={todo.id}>
-                    {todo.title}
+                    <h3>{todo.title}</h3>
+                    <p>{todo.content}</p>
                     < button > <Link to={`todo/${todo.id}`}>Edit</Link></button >
                     <button onClick={() => onCompleteClick(todo.id)}>Completed</button>
                     < button onClick={() => onDeleteClick(todo.id)}>x</button>
